@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  phpaurora:
+    build: ./php
+    volumes:
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+      - ./:/var/www/html
+    ports:
+      - 93:80
+    container_name: phpaurora
+
+  mysqlaurora:
+    image: mysql:latest
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=auroramysql
+      - MYSQL_USER=aurorauser
+      - MYSQL_PASSWORD=aurorapassword
+    container_name: mysqlaurora
+
+  phpmyadminaurora:
+    image: phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysqlaurora
+      - PMA_USER=aurorauser
+      - PMA_PASSWORD=aurorapassword
+    links:
+      - mysqlaurora
+    ports:
+      - 8081:80
+    container_name: phpmyadminaurora
